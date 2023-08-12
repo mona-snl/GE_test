@@ -1,0 +1,111 @@
+/*PART A */
+body {
+    margin: 100px;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+  }
+.grand-rectangle {
+  width: 500px; /* Ajustez la taille du rectangle au milieu du cercle */
+  height: 500px; /* Ajustez la taille du rectangle au milieu du cercle */
+  background-color: white; /* Couleur de fond du rectangle */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.circle {
+  position: relative;
+  width: 200px; /* Ajustez la taille du cercle comme nécessaire */
+  height: 200px; /* Ajustez la taille du cercle comme nécessaire */
+  border-radius: 50%;
+  background-color: blue; /* Couleur de fond du cercle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rectangle {
+  width: 150px; /* Ajustez la taille du rectangle au milieu du cercle */
+  height: 70px; /* Ajustez la taille du rectangle au milieu du cercle */
+  background-color: white; /* Couleur de fond du rectangle */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 30px;
+}
+.small-button {
+    width: 10px; /* Ajustez la taille du petit bouton */
+    height: 10px; /* Ajustez la taille du petit bouton */
+    background-color: green; /* Couleur de fond du petit bouton */
+    border: none;
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+
+.top {
+  top: -5px;
+}
+.top span {
+    display: block;
+    transform: translate(-20px ,-30px)
+}
+
+.left {
+  left: -5px;
+}
+.left span {
+    display: block;
+    transform: translate(-60px ,-5px)
+}
+
+.right {
+  right: -5px;
+}
+.right span {
+    display: block;
+    transform: translate(20px ,-5px)
+}
+
+
+#watch {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+}
+
+#modeBtn, #increaseBtn, #lightBtn {
+  width: 10px;
+  height: 10px;
+}
+
+/* PART B */
+
+.clock {
+  positon :relative
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.buttons {
+  margin-top: 100px;
+}
+
+button {
+  margin: 5px;
+}
+
+
+
+
