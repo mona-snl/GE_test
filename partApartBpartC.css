@@ -1,0 +1,206 @@
+/*PART A */
+body {
+    margin: 100px;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+  }
+.grand-rectangle {
+  width: 550px; /* Ajustez la taille du rectangle au milieu du cercle */
+  height: 300px; /* Ajustez la taille du rectangle au milieu du cercle */
+  background-color: white; /* Couleur de fond du rectangle */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.circle {
+  position: relative;
+  width: 200px; /* Ajustez la taille du cercle comme nécessaire */
+  height: 200px; /* Ajustez la taille du cercle comme nécessaire */
+  border-radius: 50%;
+  background-color: blue; /* Couleur de fond du cercle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rectangle {
+  width: 150px; /* Ajustez la taille du rectangle au milieu du cercle */
+  height: 70px; /* Ajustez la taille du rectangle au milieu du cercle */
+  background-color: white; /* Couleur de fond du rectangle */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 30px;
+}
+.small-button {
+    width: 10px; /* Ajustez la taille du petit bouton */
+    height: 10px; /* Ajustez la taille du petit bouton */
+    background-color: green; /* Couleur de fond du petit bouton */
+    border: none;
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+
+.top {
+  top: -5px;
+}
+.top span {
+    display: block;
+    transform: translate(-20px ,-30px)
+}
+
+.left {
+  left: -5px;
+}
+.left span {
+    display: block;
+    transform: translate(-60px ,-5px)
+}
+
+.right {
+  right: -5px;
+}
+.right span {
+    display: block;
+    transform: translate(20px ,-5px)
+}
+
+
+#watch {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+}
+
+#modeBtn, #increaseBtn, #lightBtn {
+  width: 10px;
+  height: 10px;
+}
+
+/* PART B */
+
+.clock {
+  positon :relative
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.buttons {
+  margin-top: 100px;
+}
+
+button {
+  margin: 5px;
+}
+
+/* -------------------------------------------*/
+/* PART C */
+
+/* Main layout */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 30vh;
+  background-color: white;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.controls-container {
+  margin-bottom: 20px;
+}
+
+.scale {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.circle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circle_clock {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff0000 50%, #00ff00 50%);
+  position: relative;
+  animation: rotateCircle 5s linear infinite;
+  margin-top: 100px;
+}
+
+@keyframes rotateCircle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Additional styles for watch */
+.clock-face {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #333;
+  position: relative;
+}
+
+.clock-time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: #333;
+}
+
+/* Style for input fields and buttons */
+input[type="number"] {
+  width: 40px;
+  padding: 5px;
+}
+
+button {
+  padding: 5px 10px;
+  border: none;
+  background-color: #A2CCF9;
+  color: blue;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
