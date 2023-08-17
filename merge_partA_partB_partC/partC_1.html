@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Clocks</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .clock {
+    display: inline-block;
+    border: 2px solid black;
+    padding: 30px;
+    margin: 100px;
+    margin-bottom: 150px;
+    position: relative;
+  }
+  .time-container {
+    position: relative;
+    display: inline-block;
+  }
+  .circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+  .time-display {
+    padding: 8px;
+    background-color: white;
+    font-size: 24px;
+    text-align: center;
+  }
+  .button-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-bottom: 100px;
+  }
+  .button {
+    border: 1px solid black;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 100px;
+    margin-top: 100px;
+    margin-left: 100px;
+    margin-bottom: 100px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .mode-button {
+    margin-right: 100px; 
+    top: -200px; 
+    left: -100px; }
+  .button2 { 
+    top: -50px; 
+    right: -50px; }
+  .button3 { 
+    bottom: -60px; 
+    right: 0px; }
+  .edit-button { 
+    bottom: -30px; 
+    right: -30px; }
+  .light-button { 
+    top: -50px; 
+    left: 0px; }
+  .buttonDiv { 
+     margin-top: 20px; }
+
+  #scale-up, #scale-down {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+@keyframes rotateCircle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Additional styles for watch */
+.clock-face {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #333;
+  position: relative;
+}
+.circle_clock {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2px solid black;
+  position: absolute; /* Change to "absolute" */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+.circle-container {
+    position: relative;
+    width: 400px; /* Adjust this value as needed */
+    height: 400px; /* Adjust this value as needed */
+    margin: auto;
+    transform-origin: center center;
+  }
+
+
+  
+</style>
+</head>
+<body>
+<div id="clockContainer" class="clockContainer">
+</div>
+<button id="addClockButton">Add Clock</button>
+<div class="buttonDiv"></div> 
+
+<button id="scale-up">Scale Up</button>
+<button id="scale-down">Scale Down</button>
+<label>
+  <input type="radio" name="revolution-point" id="center-revolution" checked> Center
+</label>
+<label>
+  <input type="radio" name="revolution-point" id="top-left-revolution"> Top Left
+</label>
+<label>
+  <input type="radio" name="revolution-point" id="custom-point-revolution"> Custom Point
+</label>
+<input type="number" id="custom-point-x" placeholder="X">
+<input type="number" id="custom-point-y" placeholder="Y">
+<button id="create-random-point">Random Point</button>
+<button id="stopAnimation">Stop Animation</button>
+
+<script>
+class Matrix3x3 {
+  constructor(elements) {
+    this.elements = elements || [1, 0, 0, 0, 1, 0, 0, 0, 1];
+  }
+
+  static rotation(angle) {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return new Matrix3x3([cos, -sin, 0, sin, cos, 0, 0, 0, 1]);
+  }
+
+  transformPoint(point) {
+    const x = point[0];
+    const y = point[1];
+    const z = point[2] || 1;
+
+    const result = new Array(3);
+
+    result[0] = this.elements[0] * x + this.elements[1] * y + this.elements[2] * z;
+    result[1] = this.elements[3] * x + this.elements[4] * y + this.elements[5] * z;
+    result[2] = this.elements[6] * x + this.elements[7] * y + this.elements[8] * z;
+
+    return result;
+  }
+}
+
+const circle = document.querySelector('.circle_clock');
+const circleClock = document.querySelector('.circle_clock'); // Selecting the correct element
+const circleContainer = document.querySelector('.clockContainer');
+const container = document.querySelector('#clockContainer');
+
+const rotationMatrix = new Matrix3x3(); // Identity matrix initially
+
+const scaleUpButton = document.getElementById('scale-up');
+const scaleDownButton = document.getElementById('scale-down');
+const centerRadio = document.getElementById('center-revolution');
+const topLeftRadio = document.getElementById('top-left-revolution');
+const customPointRadio = document.getElementById('custom-point-revolution');
+const customPointXInput = document.getElementById('custom-point-x');
+const customPointYInput = document.getElementById('custom-point-y');
+const createRandomPointButton = document.getElementById('create-random-point');
+
+// Scale variables
+let scaleValue = 1;
+const scaleStep = 0.1;
+const watchFace = document.querySelector('.clock-face');
+
+scaleUpButton.addEventListener('click', () => {
+  scaleValue += scaleStep;
+  updateScale();
+});
+
+// Scale down function
+scaleDownButton.addEventListener('click', () => {
+  scaleValue -= scaleStep;
+  if (scaleValue < scaleStep) {
+    scaleValue = scaleStep;
+  }
+  updateScale();
+});
+
+// Function to update the scale of the container
+function updateScale() {
+  circleContainer.style.transform = `scale(${scaleValue})`;
+}
+
+
+
+// Update the watch time
+function updateWatchTime() {
+  const watchTimeElement = document.getElementById('clockTime');
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+  const minutes = currentTime.getMinutes();
+  const seconds = currentTime.getSeconds();
+  watchTimeElement.textContent = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+}
+
+function formatTime(time) {
+  return time < 10 ? `0${time}` : time;
+}
+
+// Update watch time every second
+setInterval(updateWatchTime, 1000);
+
+
+
+
+
+let revolutionPoint = [100, 100]; // Default revolution point
+
+centerRadio.addEventListener('change', () => {
+  revolutionPoint = [100, 100];
+});
+
+topLeftRadio.addEventListener('change', () => {
+  revolutionPoint = [-100, -100];
+});
+
+customPointRadio.addEventListener('change', () => {
+  revolutionPoint = [parseInt(customPointXInput.value) || 0, parseInt(customPointYInput.value) || 0];
+});
+
+createRandomPointButton.addEventListener('click', () => {
+  revolutionPoint = [Math.random() * 200, Math.random() * 200]; // Random point within the container
+  customPointXInput.value = revolutionPoint[0];
+  customPointYInput.value = revolutionPoint[1];
+});
+
+let isAnimating = true; // Flag to control animation
+
+// Add an event listener to the "Stop Animation" button
+const stopAnimationButton = document.getElementById('stopAnimation');
+stopAnimationButton.addEventListener('click', () => {
+  isAnimating = false; // Stop the animation
+});
+
+function animateClockContainer() {
+  if (!isAnimating) return; // Exit if animation is stopped
+  const container = document.querySelector('.clockContainer');
+  const angle = (performance.now() / 1000) * (Math.PI / 2); // Rotating 90 degrees per second
+  rotationMatrix.elements = Matrix3x3.rotation(angle).elements;
+
+  const position = [revolutionPoint[0], revolutionPoint[1], 1]; // Custom revolution point
+  const transformedPosition = rotationMatrix.transformPoint(position);
+
+  container.style.transform = `translate(${transformedPosition[0]}px, ${transformedPosition[1]}px) rotate(${angle}rad)`;
+
+  requestAnimationFrame(animateClockContainer);
+}
+
+
+animateClockContainer()
+
+
+const clockContainer = document.getElementById("clockContainer");
+const addClockButton = document.getElementById("addClockButton");
+const clocks = [];
+
+function createClock(timeZone) {
+  const clock = document.createElement("div");
+  clock.className = "clock";
+
+  const timeContainer = document.createElement("div");
+  timeContainer.className = "time-container";
+
+  const circle = document.createElement("div");
+  circle.className = "circle";
+
+  const timeDisplay = document.createElement("div");
+  timeDisplay.className = "time-display";
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.className = "button-container";
+
+  const modeButton = document.createElement("button");
+  modeButton.className = "button mode-button";
+  const increaseButton = document.createElement("button");
+  increaseButton.className = "button button2";
+  const resetButton = document.createElement("button");
+  resetButton.className = "button button3";
+  const editBtn = document.createElement("button");
+  editBtn.className = "button edit-button";
+  editBtn.textContent = "Edit Timezone";
+  const lightButton = document.createElement("button");
+  lightButton.className = "button light-button";
+  lightButton.textContent = "Light";
+
+  let mode = 0; // 0: Minute, 1: Hour, 2: Locked
+  let currentTime = new Date();
+  let lightOn = false;
+  let is24HourFormat = true;
+
+  function updateTime() {
+    const utcTime = currentTime.getTime() + (timeZone * 60 * 60000);
+    const localTime = new Date(utcTime);
+
+    const hours = localTime.getHours().toString().padStart(2, "0");
+    const minutes = localTime.getMinutes().toString().padStart(2, "0");
+
+    const time = is24HourFormat
+      ? `${hours}:${minutes}`
+      : `${(hours % 12 || 12)}:${minutes} ${hours >= 12 ? "PM" : "AM"}`;
+
+    timeDisplay.textContent = time;
+    if (lightOn) {
+      clock.style.color = "white";
+      timeDisplay.style.backgroundColor = "yellow";
+      clock.style.backgroundColor = "yellow";
+    } else {
+      timeDisplay.style.color = "black";
+      timeDisplay.style.backgroundColor = "white";
+      clock.style.backgroundColor = "white";
+    }
+  }
+
+  function increaseTime() {
+    if (mode === 0) {
+      currentTime.setMinutes(currentTime.getMinutes() + 1);
+    } else if (mode === 1) {
+      currentTime.setHours(currentTime.getHours() + 1);
+    }
+    updateTime();
+  }
+
+  function toggleMode() {
+    mode++;
+    if (mode > 2) {
+      mode = 0;
+    }
+    switch (mode) {
+      case 0:
+        modeButton.textContent = "Mode: Minute";
+        increaseButton.textContent = "Increase Minute";
+        break;
+      case 1:
+        modeButton.textContent = "Mode: Hour";
+        increaseButton.textContent = "Increase Hour";
+        break;
+      case 2:
+        modeButton.textContent = "Mode: Locked";
+        increaseButton.textContent = "No Increase";
+        break;
+    }
+  }
+
+  function resetTime() {
+    timeZone = 0;
+    updateTime();
+  }
+
+  function toggleLight() {
+    lightOn = !lightOn;
+    updateTime();
+  }
+
+  increaseButton.textContent = "Increase";
+  increaseButton.addEventListener("click", increaseTime);
+
+  modeButton.textContent = "Mode: Minute";
+  modeButton.addEventListener("click", toggleMode);
+
+  resetButton.textContent = "Reset";
+  resetButton.addEventListener("click", resetTime);
+
+  timeDisplay.style.fontSize = "24px";
+  updateTime();
+
+  timeContainer.appendChild(circle);
+  timeContainer.appendChild(timeDisplay);
+
+  buttonContainer.appendChild(modeButton);
+  buttonContainer.appendChild(increaseButton);
+  buttonContainer.appendChild(resetButton);
+  buttonContainer.appendChild(editBtn);
+  buttonContainer.appendChild(lightButton);
+
+  clock.appendChild(timeContainer);
+  clock.appendChild(buttonContainer);
+
+  clockContainer.appendChild(clock);
+
+  clocks.push(clock);
+
+  editBtn.addEventListener("click", () => {
+    const newTimezone = parseFloat(prompt("Enter new timezone offset (e.g., 1 for GMT+1):"));
+    if (!isNaN(newTimezone)) {
+      timeZone = newTimezone;
+      updateTime();
+    }
+  });
+
+  lightButton.addEventListener("click", toggleLight);
+}
+ 
+
+function addClockWithTimeZone(timeZone) {
+  createClock(timeZone);
+}
+
+addClockButton.addEventListener("click", function () {
+  const timeZone = parseFloat(prompt("Enter time zone offset (e.g., 1 for GMT+1):"));
+  if (!isNaN(timeZone)) {
+    addClockWithTimeZone(timeZone);
+  }
+});
+
+createClock(0); // Initial clock with GMT
+</script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Clocks</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .clock {
+    display: inline-block;
+    border: 2px solid black;
+    padding: 30px;
+    margin: 100px;
+    margin-bottom: 150px;
+    position: relative;
+  }
+  .time-container {
+    position: relative;
+    display: inline-block;
+  }
+  .circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+  .time-display {
+    padding: 8px;
+    background-color: white;
+    font-size: 24px;
+    text-align: center;
+  }
+  .button-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .button {
+    border: 1px solid black;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 100px;
+    margin-top: 100px;
+    margin-left: 100px;
+    margin-bottom: 100px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .mode-button {
+    margin-right: 100px; 
+    top: -200px; 
+    left: -100px; }
+  .button2 { 
+    top: -50px; 
+    right: -50px; }
+  .button3 { 
+    bottom: -60px; 
+    right: 0px; }
+  .edit-button { 
+    bottom: -30px; 
+    right: -30px; }
+  .light-button { 
+    top: -50px; 
+    left: 0px; }
+</style>
+</head>
+<body>
+<div id="clockContainer">
+</div>
+<button id="addClockButton">Add Clock</button>
+<script>
+  const clockContainer = document.getElementById("clockContainer");
+  const addClockButton = document.getElementById("addClockButton");
+  const clocks = [];
+
+  function createClock(timeZone) {
+    const clock = document.createElement("div");
+    clock.className = "clock";
+
+    const timeContainer = document.createElement("div");
+    timeContainer.className = "time-container";
+
+    const circle = document.createElement("div");
+    circle.className = "circle";
+
+    const timeDisplay = document.createElement("div");
+    timeDisplay.className = "time-display";
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "button-container";
+
+    const modeButton = document.createElement("button");
+    modeButton.className = "button mode-button";
+    const increaseButton = document.createElement("button");
+    increaseButton.className = "button button2";
+    const resetButton = document.createElement("button");
+    resetButton.className = "button button3";
+    const editBtn = document.createElement("button");
+    editBtn.className = "button edit-button";
+    editBtn.textContent = "Edit Timezone";
+    const lightButton = document.createElement("button");
+    lightButton.className = "button light-button";
+    lightButton.textContent = "Light";
+
+    let mode = 0; // 0: Minute, 1: Hour, 2: Locked
+    let currentTime = new Date();
+    let lightOn = false;
+    let is24HourFormat = true;
+
+    function updateTime() {
+      const utcTime = currentTime.getTime() + (timeZone * 60 * 60000);
+      const localTime = new Date(utcTime);
+
+      const hours = localTime.getHours().toString().padStart(2, "0");
+      const minutes = localTime.getMinutes().toString().padStart(2, "0");
+
+      const time = is24HourFormat
+        ? `${hours}:${minutes}`
+        : `${(hours % 12 || 12)}:${minutes} ${hours >= 12 ? "PM" : "AM"}`;
+
+      timeDisplay.textContent = time;
+      if (lightOn) {
+        clock.style.color = "white";
+        timeDisplay.style.backgroundColor = "yellow";
+        clock.style.backgroundColor = "yellow";
+      } else {
+        timeDisplay.style.color = "black";
+        timeDisplay.style.backgroundColor = "white";
+        clock.style.backgroundColor = "white";
+      }
+    }
+
+    function increaseTime() {
+      if (mode === 0) {
+        currentTime.setMinutes(currentTime.getMinutes() + 1);
+      } else if (mode === 1) {
+        currentTime.setHours(currentTime.getHours() + 1);
+      }
+      updateTime();
+    }
+
+    function toggleMode() {
+      mode++;
+      if (mode > 2) {
+        mode = 0;
+      }
+      switch (mode) {
+        case 0:
+          modeButton.textContent = "Mode: Minute";
+          increaseButton.textContent = "Increase Minute";
+          break;
+        case 1:
+          modeButton.textContent = "Mode: Hour";
+          increaseButton.textContent = "Increase Hour";
+          break;
+        case 2:
+          modeButton.textContent = "Mode: Locked";
+          increaseButton.textContent = "No Increase";
+          break;
+      }
+    }
+
+    function resetTime() {
+      timeZone = 0;
+      updateTime();
+    }
+
+    function toggleLight() {
+      lightOn = !lightOn;
+      updateTime();
+    }
+
+    increaseButton.textContent = "Increase";
+    increaseButton.addEventListener("click", increaseTime);
+
+    modeButton.textContent = "Mode: Minute";
+    modeButton.addEventListener("click", toggleMode);
+
+    resetButton.textContent = "Reset";
+    resetButton.addEventListener("click", resetTime);
+
+    timeDisplay.style.fontSize = "24px";
+    updateTime();
+
+    timeContainer.appendChild(circle);
+    timeContainer.appendChild(timeDisplay);
+
+    buttonContainer.appendChild(modeButton);
+    buttonContainer.appendChild(increaseButton);
+    buttonContainer.appendChild(resetButton);
+    buttonContainer.appendChild(editBtn);
+    buttonContainer.appendChild(lightButton);
+
+    clock.appendChild(timeContainer);
+    clock.appendChild(buttonContainer);
+
+    clockContainer.appendChild(clock);
+
+    clocks.push(clock);
+
+    editBtn.addEventListener("click", () => {
+      const newTimezone = parseFloat(prompt("Enter new timezone offset (e.g., 1 for GMT+1):"));
+      if (!isNaN(newTimezone)) {
+        timeZone = newTimezone;
+        updateTime();
+      }
+    });
+
+    lightButton.addEventListener("click", toggleLight);
+  }
+
+  function addClockWithTimeZone(timeZone) {
+    createClock(timeZone);
+  }
+
+  addClockButton.addEventListener("click", function () {
+    const timeZone = parseFloat(prompt("Enter time zone offset (e.g., 1 for GMT+1):"));
+    if (!isNaN(timeZone)) {
+      addClockWithTimeZone(timeZone);
+    }
+  });
+
+  createClock(0); // Initial clock with GMT
+</script>
+</body>
+</html>
