@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Clocks</title>
+<link rel="stylesheet" href="all_parts.css">
+</head>
+<body>
+<div id="clockContainer" class="clockContainer">
+</div>
+<button id="addClockButton">Add Clock</button>
+<div class="buttonDiv"></div> 
+
+<button id="scale-up">Scale Up</button>
+<button id="scale-down">Scale Down</button>
+<label>
+  <input type="radio" name="revolution-point" id="center-revolution" checked> Center
+</label>
+<label>
+  <input type="radio" name="revolution-point" id="top-left-revolution"> Top Left
+</label>
+<label>
+  <input type="radio" name="revolution-point" id="custom-point-revolution"> Custom Point
+</label>
+<input type="number" id="custom-point-x" placeholder="X">
+<input type="number" id="custom-point-y" placeholder="Y">
+<button id="create-random-point">Random Point</button>
+<button id="stopAnimation">Stop Animation</button>
+
+<script src="all_parts.js"></script>
+</body>
+</html>
