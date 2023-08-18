@@ -1,0 +1,117 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  .clock {
+    display: inline-block;
+    border: 2px solid black;
+    border-radius: 30%;
+    padding: 30px;
+    margin: 100px;
+    margin-bottom: 150px;
+    position: relative;
+
+  }
+  .time-container {
+    position: relative;
+    display: inline-block;
+  }
+  .circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: blue;
+    border: 2px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+  .time-display {
+    padding: 8px;
+    background-color: white;
+    border-radius: 50%;
+    font-size: 24px;
+    text-align: center;
+  }
+  .button-container {
+    position: absolute;
+    display: flex;
+    border-radius: 50%;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-bottom: 100px;
+  }
+  .button {
+    border: 1px solid black;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 100px;
+    margin-top: 100px;
+    margin-left: 100px;
+    margin-bottom: 100px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+  .mode-button {
+    margin-right: 100px; 
+    top: -200px; 
+    left: -100px; }
+  .button2 { 
+    top: -50px; 
+    right: -50px; }
+  .button3 { 
+    bottom: -60px; 
+    right: 0px; }
+  .edit-button { 
+    bottom: -30px; 
+    right: -30px; }
+  .light-button { 
+    top: -50px; 
+    left: 0px; }
+  .buttonDiv { 
+     margin-top: 20px; }
+
+  #scale-up, #scale-down {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+@keyframes rotateCircle {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Additional styles for watch */
+.clock-face {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #333;
+  position: relative;
+}
+.circle_clock {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2px solid black;
+  position: absolute; /* Change to "absolute" */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+.circle-container {
+    position: relative;
+    width: 400px; /* Adjust this value as needed */
+    height: 400px; /* Adjust this value as needed */
+    margin: auto;
+    transform-origin: center center;
+  }
