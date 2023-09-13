@@ -1,5 +1,5 @@
 
-# Test GE
+# Test Javascript
 
 The aim of this project is to create an interactive watch with various features and animations.
 
